@@ -1,0 +1,45 @@
+graph TD
+    subgraph P53_Core_Dynamics
+        %% Input Node - this is what Mdm2_nuc (from the other module) connects to
+        Mdm2_nuc_input["Mdm2_nuc (from Mdm2 Module)"]
+
+        %% p53 Species
+        p53_tot["p53_total"]
+        p53_free["p53_free (Calculated)"]
+        p53U["p53U"]
+        p53UU["p53UU"]
+
+        %% Processes
+        Synt_p53["Basal p53 Synthesis (ks53)"]:::process --> p53_tot
+        
+        %% p53_free calculation (conceptual representation)
+        p53_tot ----> p53_free
+        p53U ----> p53_free 
+        p53UU ----> p53_free 
+        %% Note: Mermaid doesn't have a perfect "subtraction" arrow. 
+        %% '~~~>' is often used for dotted or wavy lines that can imply a different kind of relationship.
+        %% Alternatively, you can omit these explicit arrows to p53_free and keep it as purely "Calculated".
+
+        %% Ubiquitination Steps involving Mdm2_nuc_input
+        p53_free ----> p53U
+        Mdm2_nuc_input -- "kf" --> p53UU
+    
+        
+        %% De-ubiquitination
+        p53U -- "kr" --> p53_free
+        p53UU -- "kr" --> p53U
+
+        %% Degradation
+        p53_tot -- "kd53_" --> Degrad_p53_basal["Basal p53 Degradation"]:::process
+        p53U -- "kd53_" --> Degrad_p53U_basal["Basal p53U Degradation"]:::process
+        p53UU -- "kd53_" --> Degrad_p53UU_basal["Basal p53UU Degradation"]:::process
+        p53UU -- "kd53" --> Degrad_p53UU_polyUb["PolyUb-p53 Degradation"]:::process
+
+        %% Outputs from this module
+        p53_tot_output["p53_total (to Mdm2, Targets, Repair Modules)"]
+        p53_tot --> p53_tot_output
+    end
+    classDef process fill:#f9f,stroke:#333,stroke-width:1px,color:#333;
+
+    %% Example of how Mdm2_nuc from another module would connect (outside this subgraph definition)
+    %% Some_Mdm2_Output_Node --> Mdm2_nuc_input 

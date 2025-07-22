@@ -1,0 +1,35 @@
+graph TD
+    subgraph Kinase_Activation_Feedback
+        %% Inputs to this module
+        DNAdam_DSB_input["DNAdam_DSB (from Damage Module)"]:::damage
+        DNAdam_UV_input["DNAdam_UV (from Damage Module)"]:::damage
+        Wip1_protein_input["Wip1_protein (from Targets Module)"]
+
+        %% Kinase Species
+        ATM_Total["ATM_total (Pool)"]:::kinase
+        ATR_Total["ATR_total (Pool)"]:::kinase
+        ATM_active["ATM_active"]:::kinase
+        ATR_active["ATR_active"]:::kinase
+
+        %% Processes
+        DNAdam_DSB_input -->|k_act_atm_dsb| ATM_active
+        ATM_Total --> ATM_active
+        DNAdam_UV_input  -->|k_act_atr_uv| ATR_active
+        ATR_Total --> ATR_active
+
+        Wip1_protein_input -- "k_inact_atm_wip1" --> Inactivate_ATM["ATM Inactivation by Wip1"]:::process
+        ATM_active ----> Inactivate_ATM
+        Inactivate_ATM ----> ATM_Total
+
+        ATR_active -- "k_inact_atr" --> Inactivate_ATR["Basal ATR Inactivation"]:::process
+        Inactivate_ATR ----> ATR_Total
+
+        %% Outputs from this module
+        ATM_active_output["ATM_active (to Mdm2, Apoptosis Modules)"]
+        ATR_active_output["ATR_active (to Mdm2, Apoptosis Modules)"]
+        ATM_active --> ATM_active_output
+        ATR_active --> ATR_active_output
+    end
+    classDef process fill:#f9f,stroke:#333,stroke-width:1px,color:#333;
+    classDef damage fill:#ffcc99,stroke:#333,stroke-width:2px;
+    classDef kinase fill:#ccffff,stroke:#333,stroke-width:2px;

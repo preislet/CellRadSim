@@ -1,0 +1,28 @@
+graph TD
+    subgraph Apoptosis_Pathway
+        %% Inputs to this module
+        p53_tot_input["p53_total (from p53 Module)"]
+        ATM_active_input["ATM_active (from Kinase Module)"]
+        ATR_active_input["ATR_active (from Kinase Module)"]
+
+        %% Target Species
+        ApoptFactor["ApoptFactor"]:::p53target
+
+        %% Processes
+        p53_tot_input -- "ks_apopt, J_apopt, h_apopt" --> ApoptFactor_p53_driven["ApoptFactor (p53-driven)"]
+        ApoptFactor_p53_driven ----> ApoptFactor
+
+        ATM_active_input -- "ks_apopt_atm, J_apopt_atm" --> ApoptFactor_ATM_driven["ApoptFactor (ATM-driven)"]
+        ApoptFactor_ATM_driven ----> ApoptFactor
+
+        ATR_active_input -- "ks_apopt_atr, J_apopt_atr" --> ApoptFactor_ATR_driven["ApoptFactor (ATR-driven)"]
+        ApoptFactor_ATR_driven ----> ApoptFactor
+
+        ApoptFactor -- "kd_apopt" --> Degrad_ApoptFactor["ApoptFactor Degradation"]:::process
+
+        %% Outcomes
+        ApoptFactor -- "Threshold, Duration" --> Apoptosis["Apoptosis"]:::outcome
+    end
+    classDef process fill:#f9f,stroke:#333,stroke-width:1px,color:#333;
+    classDef p53target fill:#ccffcc,stroke:#333,stroke-width:2px;
+    classDef outcome fill:#e6e6fa,stroke:#333,stroke-width:2px;

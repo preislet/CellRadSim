@@ -1,0 +1,28 @@
+graph TD
+    subgraph DNA_Damage_Repair
+        %% Inputs to this module
+        IR_Stress_input["IR Stimulus"]:::damage
+        UV_Stress_input["UV Stimulus"]:::damage
+        p53_tot_input["p53_total (from p53 Module)"]
+
+        %% Damage Species
+        DNAdam_DSB["DNAdam_DSB"]:::damage
+        DNAdam_UV["DNAdam_UV"]:::damage
+
+        %% Processes
+        IR_Stress_input -->|kDNA_DSB| DNAdam_DSB
+        UV_Stress_input -->|kDNA_UV| DNAdam_UV
+
+        p53_tot_input -- "kdDNA_DSB, JDNA_DSB" --> Repair_DSB["DSB Repair"]:::process
+        Repair_DSB -.-> DNAdam_DSB
+        p53_tot_input -- "kdDNA_UV, JDNA_UV" --> Repair_UV["UV Repair"]:::process
+        Repair_UV -.-> DNAdam_UV
+
+        %% Outputs from this module
+        DNAdam_DSB_output["DNAdam_DSB (to Kinase Module)"]
+        DNAdam_UV_output["DNAdam_UV (to Kinase Module)"]
+        DNAdam_DSB --> DNAdam_DSB_output
+        DNAdam_UV --> DNAdam_UV_output
+    end
+    classDef process fill:#f9f,stroke:#333,stroke-width:1px,color:#333;
+    classDef damage fill:#ffcc99,stroke:#333,stroke-width:2px;

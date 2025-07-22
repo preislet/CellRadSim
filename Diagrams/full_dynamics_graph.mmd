@@ -1,0 +1,42 @@
+graph TD
+    %% Define Module Nodes
+    DamageInput(["External Stimuli"])
+    DNA_Damage_Repair_Module["DNA Damage & Repair Module"]
+    Kinase_Module["Kinase (ATM/ATR) Module"]
+    P53_Core_Module["p53 Core Dynamics Module"]
+    Mdm2_Core_Module["Mdm2 Core Dynamics Module"]
+    P53_Targets_Module["p53 Targets (p21/Wip1) & Arrest Module"]
+    Apoptosis_Module["Apoptosis Pathway Module"]
+    Cell_Outcomes["Cellular Outcomes (Arrest/Apoptosis)"]
+
+    %% Connections - arranged more vertically
+    DamageInput -->|IR/UV Stress| DNA_Damage_Repair_Module
+    DNA_Damage_Repair_Module -->|DNAdam_DSB, DNAdam_UV| Kinase_Module
+    
+    Kinase_Module -->|ATM_active, ATR_active| Mdm2_Core_Module
+    Kinase_Module -->|ATM_active, ATR_active| Apoptosis_Module
+    
+    P53_Core_Module -->|p53_total| Mdm2_Core_Module
+    Mdm2_Core_Module -->|Mdm2_nuc| P53_Core_Module 
+
+    P53_Core_Module -->|p53_total| P53_Targets_Module
+    P53_Core_Module -->|p53_total| Apoptosis_Module
+    P53_Core_Module -->|p53_total for repair| DNA_Damage_Repair_Module 
+
+    P53_Targets_Module -->|Wip1_protein feedback| Kinase_Module
+    P53_Targets_Module -->|p21 - leads to Arrest| Cell_Outcomes
+    
+    Apoptosis_Module -->|ApoptFactor - leads to Apoptosis| Cell_Outcomes
+
+    %% Feedback for damage repair completion (conceptual)
+    DNA_Damage_Repair_Module -.->|Damage Cleared| DamageInput 
+
+    %% Styling for clarity
+    style DamageInput fill:#ccc,stroke:#333
+    style Cell_Outcomes fill:#afa,stroke:#333
+    style DNA_Damage_Repair_Module fill:#f0e68c,stroke:#333
+    style Kinase_Module fill:#add8e6,stroke:#333
+    style P53_Core_Module fill:#ffb6c1,stroke:#333
+    style Mdm2_Core_Module fill:#ffb6c1,stroke:#333
+    style P53_Targets_Module fill:#90ee90,stroke:#333
+    style Apoptosis_Module fill:#ffcccb,stroke:#333

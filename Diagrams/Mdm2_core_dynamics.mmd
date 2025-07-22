@@ -1,0 +1,39 @@
+graph TD
+    subgraph Mdm2_Core_Dynamics
+        %% Inputs to this module
+        p53_tot_input["p53_total (from p53 Module)"]
+        ATM_active_input["ATM_active (from Kinase Module)"]
+        ATR_active_input["ATR_active (from Kinase Module)"]
+
+        %% Mdm2 Species
+        Mdm2_cyt["Mdm2_cyt"]
+        Mdm2P_cyt["Mdm2P_cyt"]
+        Mdm2_nuc["Mdm2_nuc"]
+
+        %% Processes
+        Synt_Mdm2_basal["Basal Mdm2_cyt Synthesis (ks2_)"]:::process --> Mdm2_cyt
+        p53_tot_input -- "Hill (ks2, Js, m)" --> Synt_Mdm2_p53dep["p53-dep Mdm2_cyt Synthesis"]:::process
+        Synt_Mdm2_p53dep --> Mdm2_cyt
+
+        Mdm2_cyt -- "kph / (J + p53_tot_input)" --> Mdm2P_cyt
+        Mdm2P_cyt -- "kdeph" --> Mdm2_cyt
+        Mdm2P_cyt -- "ki" --> Mdm2_nuc
+        Mdm2_nuc -- "ko" --> Mdm2P_cyt
+
+        %% Degradation (simplified, actual kd2 combines basal + kinase effects)
+        Mdm2_cyt -- "Total_kd2" --> Degrad_Mdm2_cyt["Mdm2_cyt Degradation"]:::process
+        Mdm2P_cyt -- "Total_kd2" --> Degrad_Mdm2P_cyt["Mdm2P_cyt Degradation"]:::process
+        Mdm2_nuc -- "Total_kd2" --> Degrad_Mdm2_nuc_proc["Mdm2_nuc Degradation"]:::process
+
+        %% Kinase effect contributing to Total_kd2 (conceptual)
+        ATM_active_input -- "J_atm_kd2, kd2__ATM_max" --> ATM_effect_on_kd2["ATM effect on Total_kd2"]
+        ATR_active_input -- "J_atr_kd2, kd2__ATR_max" --> ATR_effect_on_kd2["ATR effect on Total_kd2"]
+        ATM_effect_on_kd2 -.-> Degrad_Mdm2_nuc_proc
+        ATR_effect_on_kd2 -.-> Degrad_Mdm2_nuc_proc
+        %% Also implies effect on Degrad_Mdm2_cyt and Degrad_Mdm2P_cyt via Total_kd2
+
+        %% Outputs from this module
+        Mdm2_nuc_output["Mdm2_nuc (to p53 Module)"]
+        Mdm2_nuc --> Mdm2_nuc_output
+    end
+    classDef process fill:#f9f,stroke:#333,stroke-width:1px,color:#333;

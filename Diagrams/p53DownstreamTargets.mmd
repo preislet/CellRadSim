@@ -1,0 +1,26 @@
+graph TD
+    subgraph P53_Targets_Arrest
+        %% Inputs to this module
+        p53_tot_input["p53_total (from p53 Module)"]
+
+        %% Target Species
+        p21_protein["p21_protein"]:::p53target
+        Wip1_protein["Wip1_protein"]:::p53target
+
+        %% Processes
+        p53_tot_input -- "ks_p21, J_p21, h_p21" --> p21_protein
+        p21_protein -- "kd_p21" --> Degrad_p21["p21 Degradation"]:::process
+
+        p53_tot_input -- "ks_wip1, J_wip1, h_wip1" --> Wip1_protein
+        Wip1_protein -- "kd_wip1" --> Degrad_Wip1["Wip1 Degradation"]:::process
+
+        %% Outcomes
+        p21_protein --> CellCycleArrest["Cell Cycle Arrest"]:::outcome
+
+        %% Outputs from this module
+        Wip1_protein_output["Wip1_protein (to Kinase Module)"]
+        Wip1_protein --> Wip1_protein_output
+    end
+    classDef process fill:#f9f,stroke:#333,stroke-width:1px,color:#333;
+    classDef p53target fill:#ccffcc,stroke:#333,stroke-width:2px;
+    classDef outcome fill:#e6e6fa,stroke:#333,stroke-width:2px;
